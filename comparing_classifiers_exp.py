@@ -17,9 +17,10 @@ from imblearn.ensemble import (BalancedRandomForestClassifier, EasyEnsembleClass
                                 BalancedBaggingClassifier, RUSBoostClassifier)
 
 from read_data import read_data
-from visualisation import (evaluate, print_fold_performance, print_mean_performance,
+from visualisation import (print_fold_performance, print_mean_performance,
                             plot_mean_performance, plot_mean_roc_curve, plot_combined_roc_curves,
                             plot_learning_curve, plot_combined_learning_curves)
+from evaluation import evaluate
 
 
 classifiers = {

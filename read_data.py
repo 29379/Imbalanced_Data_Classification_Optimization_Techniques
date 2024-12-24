@@ -18,7 +18,3 @@ def read_data():
     y = y[1:10000]
 
     return X, y
-
-
-if __name__ == "__main__":
-    read_data()

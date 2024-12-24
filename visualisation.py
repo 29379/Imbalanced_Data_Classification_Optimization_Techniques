@@ -1,20 +1,7 @@
-from sklearn.metrics import (accuracy_score, precision_score, recall_score,
-                              f1_score, balanced_accuracy_score, roc_auc_score,
-                                confusion_matrix, roc_curve)
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import learning_curve
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-def evaluate(y_test, y_pred, y_probs):
-    acc = accuracy_score(y_test, y_pred)
-    prec = precision_score(y_test, y_pred)
-    rec = recall_score(y_test, y_pred)
-    f1 = f1_score(y_test, y_pred)
-    bal_acc = balanced_accuracy_score(y_test, y_pred)
-    roc_auc = roc_auc_score(y_test, y_probs)
-    fpr, tpr, _ = roc_curve(y_test, y_probs)
-    return acc, prec, rec, f1, bal_acc, roc_auc, fpr, tpr, _
 
 
 def print_fold_performance(fold_index, y_test, y_pred, acc, prec, rec, f1, bal_acc, roc_auc, model_name):
