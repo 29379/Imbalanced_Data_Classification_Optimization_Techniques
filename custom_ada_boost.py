@@ -1,0 +1,2 @@
+class CustomAdaBoost:
+    pass
