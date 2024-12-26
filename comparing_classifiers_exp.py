@@ -21,18 +21,19 @@ from visualisation import (print_fold_performance, print_mean_performance,
                             plot_mean_performance, plot_mean_roc_curve, plot_combined_roc_curves,
                             plot_learning_curve, plot_combined_learning_curves)
 from evaluation import evaluate
+from custom_ada_boost import CustomAdaBoostClassifier
 
 
 classifiers = {
     "Naive Bayes": GaussianNB(),
     # "SVM": SVC(probability=True),
     # "Random Forest": BalancedRandomForestClassifier(),
-    # "AdaBoost": AdaBoostClassifier(),
+    "AdaBoost": AdaBoostClassifier(algorithm="SAMME"),
     # "EasyEnsemble": EasyEnsembleClassifier(),
     # "BalancedBagging": BalancedBaggingClassifier(),
     # "RUSBoost": RUSBoostClassifier(),
-    "BalancedRandomForest": BalancedRandomForestClassifier(),
-    # "Custom AdaBoost": AdaBoostClassifier()
+    # "BalancedRandomForest": BalancedRandomForestClassifier(),
+    "Custom AdaBoost": CustomAdaBoostClassifier()
 }
 
 balancing_data_strategies_names = [
@@ -68,8 +69,8 @@ for model_name, model in classifiers.items():
     mean_fpr = np.linspace(0, 1, 1000)  # common range for fpr
 
     for i, (train_index, test_index) in enumerate(rskf.split(X, y)):
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]   
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]  
 
         model.fit(X_train, y_train)
 

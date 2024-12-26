@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 def read_data():
@@ -17,4 +18,4 @@ def read_data():
     X = X[1:10000]
     y = y[1:10000]
 
-    return X, y
+    return np.array(X), np.array(y)

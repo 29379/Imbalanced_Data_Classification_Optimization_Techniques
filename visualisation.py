@@ -6,19 +6,19 @@ import numpy as np
 
 def print_fold_performance(fold_index, y_test, y_pred, acc, prec, rec, f1, bal_acc, roc_auc, model_name):
     print(f'{model_name} | Fold {fold_index + 1}:')
-    print(f'  Accuracy: {acc:.4f}, Precision: {prec:.4f}, Recall: {rec:.4f}, F1: {f1:.4f}')
-    print(f'  Balanced Accuracy: {bal_acc:.4f}, ROC-AUC: {roc_auc:.4f}')
+    print(f'  Accuracy: {acc:.3f}, Precision: {prec:.3f}, Recall: {rec:.3f}, F1: {f1:.3f}')
+    print(f'  Balanced Accuracy: {bal_acc:.3f}, ROC-AUC: {roc_auc:.3f}')
     print(confusion_matrix(y_test, y_pred))
 
 
 def print_mean_performance(accuracies, precisions, recalls, f1s, balanced_accuracies, roc_aucs, model_name):
     print(f'{model_name} | Mean scores:')
-    print(f'Mean Accuracy: {np.mean(accuracies):.4f}')
-    print(f'Mean Precision: {np.mean(precisions):.4f}')
-    print(f'Mean Recall: {np.mean(recalls):.4f}')
-    print(f'Mean F1: {np.mean(f1s):.4f}')
-    print(f'Mean Balanced Accuracy: {np.mean(balanced_accuracies):.4f}')
-    print(f'Mean ROC-AUC: {np.mean(roc_aucs):.4f}\n\n')
+    print(f'Mean Accuracy: {np.mean(accuracies):.3f}')
+    print(f'Mean Precision: {np.mean(precisions):.3f}')
+    print(f'Mean Recall: {np.mean(recalls):.3f}')
+    print(f'Mean F1: {np.mean(f1s):.3f}')
+    print(f'Mean Balanced Accuracy: {np.mean(balanced_accuracies):.3f}')
+    print(f'Mean ROC-AUC: {np.mean(roc_aucs):.3f}\n\n')
 
 
 def plot_mean_performance(accuracies, precisions, recalls, f1s, balanced_accuracies, roc_aucs, model_name):
@@ -46,8 +46,8 @@ def plot_mean_performance(accuracies, precisions, recalls, f1s, balanced_accurac
 
 def plot_mean_roc_curve(mean_fpr, mean_tpr, mean_roc_auc, model_name):
     plt.figure(figsize=(10, 6))
-    plt.plot(mean_fpr, mean_tpr, color='blue', label=f'Mean ROC (AUC = {mean_roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Diagonal line
+    plt.plot(mean_fpr, mean_tpr, color='blue', label=f'Mean ROC (AUC = {mean_roc_auc:.3f})')
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Add a random classifier baseline
     plt.title(f'{model_name} - Mean ROC Curve')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
@@ -60,10 +60,9 @@ def plot_combined_roc_curves(roc_curves):
     plt.figure(figsize=(12, 8))
     
     for model_name, (mean_fpr, mean_tpr, mean_roc_auc) in roc_curves.items():
-        plt.plot(mean_fpr, mean_tpr, label=f"{model_name} (AUC = {mean_roc_auc:.4f})")
+        plt.plot(mean_fpr, mean_tpr, label=f"{model_name} (AUC = {mean_roc_auc:.3f})")
     
-    # Add a random classifier baseline
-    plt.plot([0, 1], [0, 1], 'k--', lw=2, label="Random Classifier")
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Add a random classifier baseline
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
     plt.title("Comparison of ROC Curves")
@@ -85,8 +84,8 @@ def plot_learning_curve(estimator, X, y, model_name, cv, scoring):
     plt.figure(figsize=(10, 6))
     plt.fill_between(train_sizes, train_scores_mean - train_scores_std, train_scores_mean + train_scores_std, alpha=0.1, color="r")
     plt.fill_between(train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std, alpha=0.1, color="g")
-    plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
-    plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Cross-validation score")
+    plt.plot(train_sizes, train_scores_mean, color="r", label="Training score")
+    plt.plot(train_sizes, test_scores_mean, color="g", label="Cross-validation score")
 
     plt.title(f"Learning Curve for {model_name}")
     plt.xlabel("Training Examples")
