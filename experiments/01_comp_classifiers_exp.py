@@ -1,5 +1,5 @@
 import numpy as np
-import os, sys
+import os, sys, multiprocessing
 
 from sklearn.model_selection import (train_test_split, StratifiedKFold,
                                       cross_val_score, RepeatedStratifiedKFold,
@@ -15,30 +15,9 @@ sys.path.insert(0, project_root)
 from read_data import read_data
 from visualisation_methods import print_fold_performance, print_mean_performance
 from evaluation import evaluate
-from experiment_parameters import classifiers
+from experiment_parameters import classifiers_ex01
 
-if not os.path.exists('results'):
-    os.makedirs('results')
-if not os.path.exists('results/data'):
-    os.makedirs('results/data')
-if not os.path.exists('results/visualisations'):
-    os.makedirs('results/visualisations')
-results_data_dir = 'results/data/comparing_classifiers_exp_01'
-results_visualisations_dir = 'results/visualisations/comparing_classifiers_exp_01'
-if not os.path.exists(results_data_dir):
-    os.makedirs(results_data_dir)
-if not os.path.exists(results_visualisations_dir):
-    os.makedirs(results_visualisations_dir)
-
-
-rskf = RepeatedStratifiedKFold(n_splits=2, n_repeats=5, random_state=42)
-
-X, y = read_data()
-
-learning_curves = {}
-experiment_results = {}
-
-for model_name, model in classifiers.items():
+def evaluate_classifier(model_name, model, X, y, rskf, results_data_dir, experiment_results):
     print(f"Running experiment for {model_name}...\n")
 
     classifier_results = {
@@ -95,6 +74,40 @@ for model_name, model in classifiers.items():
     np.save(os.path.join(results_data_dir, f"{model_name}_results.npy"), classifier_results)
 
     print_mean_performance(classifier_results["accuracies"], classifier_results["precisions"], classifier_results["recalls"], 
-                           classifier_results["f1s"], classifier_results["balanced_accuracies"], classifier_results["roc_aucs"], model_name)
+                        classifier_results["f1s"], classifier_results["balanced_accuracies"], classifier_results["roc_aucs"], model_name)
 
-np.save(os.path.join(results_data_dir, "all_experiment_results.npy"), experiment_results)
+
+def main():
+    if not os.path.exists('results'):
+        os.makedirs('results')
+    if not os.path.exists('results/data'):
+        os.makedirs('results/data')
+    if not os.path.exists('results/visualisations'):
+        os.makedirs('results/visualisations')
+    results_data_dir = 'results/data/comparing_classifiers_exp_01'
+    results_visualisations_dir = 'results/visualisations/comparing_classifiers_exp_01'
+    if not os.path.exists(results_data_dir):
+        os.makedirs(results_data_dir)
+    if not os.path.exists(results_visualisations_dir):
+        os.makedirs(results_visualisations_dir)
+
+    rskf = RepeatedStratifiedKFold(n_splits=2, n_repeats=5, random_state=42)
+
+    X, y = read_data()
+    experiment_results = {}
+    processes = []
+
+    for model_name, model in classifiers_ex01.items():
+        process = multiprocessing.Process(target=evaluate_classifier, args=(model_name, model, X, y, rskf, results_data_dir, experiment_results))
+        processes.append(process)
+
+    for process in processes:
+        process.start()
+    for process in processes:
+        process.join()
+
+    np.save(os.path.join(results_data_dir, "all_experiment_results.npy"), experiment_results)
+
+
+if __name__ == "__main__":
+    main()

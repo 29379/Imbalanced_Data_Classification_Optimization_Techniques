@@ -129,7 +129,7 @@ def plot_combined_learning_curves(results_data_dir, results_visualisations_dir):
     print("Plotting combined learning curves...\n")
     plt.figure(figsize=(12, 8))
     plt.subplot(1, 2, 1)
-    plt.title("Combined Learning Curves")
+    plt.title("Training Scores Across Models")
 
     for file in os.listdir(results_data_dir):
         if file.endswith("_results.npy") and file != "all_experiment_results.npy":
@@ -168,3 +168,4 @@ def plot_combined_learning_curves(results_data_dir, results_visualisations_dir):
     plt.tight_layout()
     plt.savefig(os.path.join(results_visualisations_dir, "combined_learning_curves.png"))
     plt.close()
+    
