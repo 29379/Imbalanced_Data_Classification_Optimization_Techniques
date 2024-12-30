@@ -5,6 +5,21 @@ import numpy as np
 import os
 
 
+def plot_in_2d(X, y, title='Classes'):
+    plt.figure(figsize=(8, 8))
+
+    colors = ['#0c6ac1', '#eb5141']
+    for label, color in zip(np.unique(y), colors):
+        plt.scatter(
+            X[y==label, 0],
+            X[y==label, 1],
+            c=color, label=label, alpha=0.8
+        )
+    plt.title(title)
+    plt.legend(loc='upper right')
+    plt.show()
+
+
 def print_fold_performance(fold_index, y_test, y_pred, acc, prec, rec, f1, bal_acc, roc_auc, model_name):
     print(f'{model_name} | Fold {fold_index + 1}:')
     print(f'  Accuracy: {acc:.3f}, Precision: {prec:.3f}, Recall: {rec:.3f}, F1: {f1:.3f}')

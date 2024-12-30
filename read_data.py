@@ -1,10 +1,17 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
 
 
 def read_data():
     print('Reading data...\n')
     df = pd.read_csv('data/creditcard.csv')
+    df = df.drop(['Time'], axis=1)
+    
+    temp = df['Amount'].values.reshape(-1, 1)
+    df['Amount'] = StandardScaler().fit_transform(temp)
     
     count_non_fraud = df[df['Class'] == 0]
     count_fraud = df[df['Class'] == 1]
