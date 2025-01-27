@@ -195,7 +195,7 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 
 # Dataset:
-data/
+dataset/
 
 # Examples:
 00_klasyfikacja/
