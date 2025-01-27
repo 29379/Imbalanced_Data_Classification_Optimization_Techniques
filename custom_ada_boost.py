@@ -16,7 +16,7 @@ class CustomAdaBoostClassifier(BaseEstimator, ClassifierMixin):
     def fit(self, X_train: np.array, y_train: np.array) -> None:
         self.X_train = X_train
         self.y_train = y_train
-        self.classes_ = np.unique(y_train)  # Store the unique classes for learning curve plotting
+        self.classes_ = np.unique(y_train)
 
         X_bootstrapped = X_train
         y_bootstrapped = y_train

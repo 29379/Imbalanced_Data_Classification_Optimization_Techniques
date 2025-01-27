@@ -20,20 +20,15 @@ def plot_in_2d(X, y, title='Classes'):
     plt.show()
 
 
-def print_fold_performance(fold_index, y_test, y_pred, acc, prec, rec, f1, bal_acc, roc_auc, model_name):
+def print_fold_performance(fold_index, f1, roc_auc, model_name):
     print(f'{model_name} | Fold {fold_index + 1}:')
-    print(f'  Accuracy: {acc:.3f}, Precision: {prec:.3f}, Recall: {rec:.3f}, F1: {f1:.3f}')
-    print(f'  Balanced Accuracy: {bal_acc:.3f}, ROC-AUC: {roc_auc:.3f}')
-    print(confusion_matrix(y_test, y_pred))
+    print(f'  F1: {f1:.3f}')
+    print(f'  ROC-AUC: {roc_auc:.3f}')
 
 
-def print_mean_performance(accuracies, precisions, recalls, f1s, balanced_accuracies, roc_aucs, model_name):
+def print_mean_performance(f1s, roc_aucs, model_name):
     print(f'{model_name} | Mean scores:')
-    print(f'Mean Accuracy: {np.mean(accuracies):.3f}')
-    print(f'Mean Precision: {np.mean(precisions):.3f}')
-    print(f'Mean Recall: {np.mean(recalls):.3f}')
     print(f'Mean F1: {np.mean(f1s):.3f}')
-    print(f'Mean Balanced Accuracy: {np.mean(balanced_accuracies):.3f}')
     print(f'Mean ROC-AUC: {np.mean(roc_aucs):.3f}\n\n')
 
 
@@ -41,11 +36,7 @@ def plot_mean_performance(model_name, results_data_dir, results_visualisations_d
     print(f"Plotting mean performance for {model_name}...\n")
     results = np.load(os.path.join(results_data_dir, f"{model_name}_results.npy"), allow_pickle=True).item()
     metrics = {
-        'Accuracy': results['accuracies'],
-        'Precision': results['precisions'],
-        'Recall': results['recalls'],
         'F1': results['f1s'],
-        'Balanced Accuracy': results['balanced_accuracies'],
         'ROC-AUC': results['roc_aucs'],
     }
 
@@ -67,7 +58,7 @@ def plot_mean_performance(model_name, results_data_dir, results_visualisations_d
 def plot_mean_roc_curve(model_name, results_data_dir, results_visualisations_dir):
     print(f"Plotting mean ROC curve for {model_name}...\n")
     results = np.load(os.path.join(results_data_dir, f"{model_name}_results.npy"), allow_pickle=True).item()
-    mean_fpr = np.linspace(0, 1, 1000) # common range for fpr
+    mean_fpr = results["mean_fpr"]
     mean_tpr = results['mean_tpr']
     mean_roc_auc = auc(mean_fpr, mean_tpr)
 

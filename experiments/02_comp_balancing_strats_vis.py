@@ -14,7 +14,7 @@ for strat_name, strat in balancing_data_strategies_ex02.items():
         combined_name = f"{strat_name}_{model_name}"
         plot_mean_performance(combined_name, results_data_dir, results_visualisations_dir)
         plot_mean_roc_curve(combined_name, results_data_dir, results_visualisations_dir)
-        plot_learning_curve(combined_name, results_data_dir, results_visualisations_dir)
+        # plot_learning_curve(combined_name, results_data_dir, results_visualisations_dir)
 
-plot_combined_learning_curves(results_data_dir, results_visualisations_dir)
+# plot_combined_learning_curves(results_data_dir, results_visualisations_dir)
 plot_combined_roc_curves(results_data_dir, results_visualisations_dir)

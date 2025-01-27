@@ -196,3 +196,7 @@ pyrightconfig.json
 
 # Dataset:
 data/
+
+# Examples:
+00_klasyfikacja/
+01_eksperymenty/

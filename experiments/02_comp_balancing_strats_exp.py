@@ -14,14 +14,8 @@ from experiment_parameters import classifiers_ex02, balancing_data_strategies_ex
 
 
 def evaluate_balancing_strats(strat_name, strat, X, y, rskf, results_data_dir, experiment_results):
-    print(f"Running experiment for {strat_name}...\n")
-
     classifier_results = {
-        "accuracies": [],
-        "precisions": [],
-        "recalls": [],
         "f1s": [],
-        "balanced_accuracies": [],
         "roc_aucs": [],
         "true_positive_rates": [],
         "mean_fpr": np.linspace(0, 1, 1000), # common range for fpr
@@ -42,39 +36,34 @@ def evaluate_balancing_strats(strat_name, strat, X, y, rskf, results_data_dir, e
             y_pred = model.predict(X_test)
             y_probs = model.predict_proba(X_test)[:, 1]
 
-            acc, prec, rec, f1, bal_acc, roc_auc, fpr, tpr, _ = evaluate(y_test, y_pred, y_probs)
+            f1, roc_auc, fpr, tpr, _ = evaluate(y_test, y_pred, y_probs)
             
-            classifier_results["accuracies"].append(acc)
-            classifier_results["precisions"].append(prec)
-            classifier_results["recalls"].append(rec)
             classifier_results["f1s"].append(f1)
-            classifier_results["balanced_accuracies"].append(bal_acc)
             classifier_results["roc_aucs"].append(roc_auc)
 
             tpr_interp = np.interp(classifier_results["mean_fpr"], fpr, tpr)  # Interpolate tpr to the common fpr range
             tpr_interp[0] = 0.0  # Ensure curve starts at (0, 0)
             classifier_results["true_positive_rates"].append(tpr_interp)
 
-            print_fold_performance(i, y_test, y_pred, acc, prec, rec, f1, bal_acc, roc_auc, f"{strat_name} - {model_name}")
+            print_fold_performance(i, f1, roc_auc, f"{strat_name} - {model_name}")
 
         mean_tpr = np.mean(classifier_results["true_positive_rates"], axis=0)
         mean_tpr[-1] = 1.0  # ensure curve ends at (1, 1)
         classifier_results["mean_tpr"] = mean_tpr
 
-        train_sizes, train_scores, test_scores = learning_curve(
-            model, X, y, cv=rskf, scoring="roc_auc", n_jobs=1, train_sizes=np.linspace(0.1, 1.0, 5)
-        )
-        classifier_results["learning_curve"] = {
-            "train_sizes": train_sizes,
-            "train_scores": train_scores,
-            "test_scores": test_scores
-        }
+        experiment_results["{strat_name}_{model_name}"] = classifier_results
+        # result_file = os.path.join(results_data_dir, f"{strat_name}_{model_name}_results.npy")
+        # np.save(result_file, classifier_results)
+        
+        base_filename = os.path.join(results_data_dir, f"{strat_name}_{model_name}_results")
+        filename = base_filename + ".npy"
+        i = 0
+        while os.path.exists(filename):
+            i += 1
+            filename = f"{base_filename}_{i}.npy"
+        np.save(filename, classifier_results)
 
-        experiment_results[model_name] = classifier_results
-        np.save(os.path.join(results_data_dir, f"{strat_name}_{model_name}_results.npy"), classifier_results)
-
-        print_mean_performance(classifier_results["accuracies"], classifier_results["precisions"], classifier_results["recalls"], 
-                    classifier_results["f1s"], classifier_results["balanced_accuracies"], classifier_results["roc_aucs"], f"{strat_name} - {model_name}")
+        print_mean_performance(classifier_results["f1s"], classifier_results["roc_aucs"], f"{strat_name} - {model_name}")
 
         
 
@@ -110,4 +99,6 @@ def main():
     np.save(os.path.join(results_data_dir, "all_experiment_results.npy"), experiment_results)
 
 if __name__ == "__main__":
-    main()
+    for i in range(10):
+        main()
+        print(f"Finished iteration {i+1} of 10 - experiment 02")

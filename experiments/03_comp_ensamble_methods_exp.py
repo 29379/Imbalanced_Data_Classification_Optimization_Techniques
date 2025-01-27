@@ -4,7 +4,6 @@ import os, sys, multiprocessing
 from sklearn.model_selection import (train_test_split, StratifiedKFold,
                                       cross_val_score, RepeatedStratifiedKFold,
                                       learning_curve)
-from sklearn.metrics import auc
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
@@ -12,7 +11,7 @@ sys.path.insert(0, project_root)
 from read_data import read_data
 from visualisation_methods import print_fold_performance, print_mean_performance
 from evaluation import evaluate
-from experiment_parameters import classifiers_ex01
+from experiment_parameters import classifiers_ex03
 
 from visualisation_methods import plot_in_2d
 
@@ -23,7 +22,6 @@ def evaluate_classifier(model_name, model, X, y, rskf, results_data_dir, experim
         "f1s": [],
         "roc_aucs": [],
         "true_positive_rates": [],
-        # "false_positive_rates": [],
         "mean_fpr": np.linspace(0, 1, 1000), # common range for fpr
         "mean_tpr": [],
         "learning_curve": {}
@@ -46,19 +44,15 @@ def evaluate_classifier(model_name, model, X, y, rskf, results_data_dir, experim
         tpr_interp = np.interp(classifier_results["mean_fpr"], fpr, tpr)  # Interpolate tpr to the common fpr range
         tpr_interp[0] = 0.0  # Ensure curve starts at (0, 0)
         classifier_results["true_positive_rates"].append(tpr_interp)
-        # classifier_results["false_positive_rates"].append(fpr)
 
         print_fold_performance(i, f1, roc_auc, model_name)
 
     mean_tpr = np.mean(classifier_results["true_positive_rates"], axis=0)
     mean_tpr[-1] = 1.0  # ensure curve ends at (1, 1)
     classifier_results["mean_tpr"] = mean_tpr
-    # mean_fpr = np.mean(classifier_results["false_positive_rates"], axis=0)
-    # classifier_results["mean_fpr"] = mean_fpr
 
     experiment_results[model_name] = classifier_results
     # np.save(os.path.join(results_data_dir, f"{model_name}_results.npy"), classifier_results)
-
     base_filename = os.path.join(results_data_dir, f"{model_name}_results")
     filename = base_filename + ".npy"
     i = 0
@@ -66,7 +60,7 @@ def evaluate_classifier(model_name, model, X, y, rskf, results_data_dir, experim
         i += 1
         filename = f"{base_filename}_{i}.npy"
     np.save(filename, classifier_results)
-    
+
     print_mean_performance(classifier_results["f1s"], classifier_results["roc_aucs"], model_name)
 
 
@@ -80,8 +74,8 @@ def main():
         os.makedirs('results/data')
     if not os.path.exists('results/visualisations'):
         os.makedirs('results/visualisations')
-    results_data_dir = 'results/data/comparing_classifiers_exp_01'
-    results_visualisations_dir = 'results/visualisations/comparing_classifiers_exp_01'
+    results_data_dir = 'results/data/comparing_ensamble_methods_exp_03'
+    results_visualisations_dir = 'results/visualisations/comparing_ensamble_methods_exp_03'
     if not os.path.exists(results_data_dir):
         os.makedirs(results_data_dir)
     if not os.path.exists(results_visualisations_dir):
@@ -92,7 +86,7 @@ def main():
     experiment_results = {}
     processes = []
 
-    for model_name, model in classifiers_ex01.items():
+    for model_name, model in classifiers_ex03.items():
         process = multiprocessing.Process(target=evaluate_classifier, args=(model_name, model, X, y, rskf, results_data_dir, experiment_results))
         processes.append(process)
 
@@ -107,4 +101,4 @@ def main():
 if __name__ == "__main__":
     for i in range(10):
         main()
-        print(f"Finihsed iteration {i+1} - experiment 01")
+        print(f"Finsihed iteration {i+1} - experiment 03")
